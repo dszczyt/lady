@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/dszczyt/lady"
 	"github.com/stretchr/testify/mock"
 )
@@ -24,8 +23,6 @@ func (d *DemoStruct) Demo() {
 
 func TestDI(t *testing.T) {
 	t.Run("simple", func(t *testing.T) {
-		// assert := tassert.New(t)
-
 		container := lady.New()
 
 		obj := DemoStruct{}
@@ -35,7 +32,6 @@ func TestDI(t *testing.T) {
 		container.Bind(new(DemoIface), &obj)
 
 		test := func(d DemoIface) {
-			spew.Dump("CALLING", d)
 			d.Demo()
 		}
 

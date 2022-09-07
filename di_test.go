@@ -1,6 +1,7 @@
 package lady_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/dszczyt/lady"
@@ -114,5 +115,22 @@ func TestDI(t *testing.T) {
 		lady.Call2(container, test)
 
 		obj.AssertExpectations(t)
+	})
+
+	t.Run("example1", func(t *testing.T) {
+		ctx := context.Background()
+		handler := func(ctx context.Context, dao DemoIface) {}
+		container := lady.New()
+
+		obj := DemoStruct{}
+		obj.On("Demo").Return()
+
+		container.Bind(new(DemoIface), &obj)
+
+		// Resolve1 should deduce the dao argument, so it returns a new function defintiion without it,
+		// because it can be resolved at runtime
+		var resolvedHandler func(ctx context.Context) = lady.Resolve1(handler)
+
+		resolvedHandler(ctx)
 	})
 }

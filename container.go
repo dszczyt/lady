@@ -2,6 +2,8 @@ package lady
 
 import (
 	"reflect"
+
+	"github.com/samber/lo"
 )
 
 type Container struct {
@@ -27,7 +29,16 @@ func Call1[T any, F func(T)](c *Container, f F, others ...any) {
 		args = append(args, arg)
 	} else {
 		args = append(args, reflect.ValueOf(others[0]))
+		others = others[1:]
 	}
+
+	args = append(
+		args,
+		lo.Map(
+			others,
+			func(value interface{}, _ int) reflect.Value { return reflect.ValueOf(value) },
+		)...,
+	)
 
 	v.Call(args)
 }

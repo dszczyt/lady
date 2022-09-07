@@ -18,10 +18,16 @@ func (c *Container) Bind(src interface{}, dst interface{}) {
 	c.data[reflect.TypeOf(src)] = reflect.ValueOf(dst)
 }
 
-func Call1[T any, F func(T)](c *Container, f F) {
+func Call1[T any, F func(T)](c *Container, f F, others ...any) {
 	v := reflect.ValueOf(f)
 
-	args := []reflect.Value{c.data[reflect.PointerTo(v.Type().In(0))]}
+	args := []reflect.Value{}
+
+	if arg, ok := c.data[reflect.PointerTo(v.Type().In(0))]; ok {
+		args = append(args, arg)
+	} else {
+		args = append(args, reflect.ValueOf(others[0]))
+	}
 
 	v.Call(args)
 }
@@ -43,7 +49,7 @@ func Call2[T any, U any, F func(T, U)](c *Container, f F, others ...any) {
 	v.Call(args)
 }
 
-func Call3[T any, U any, V any, F func(T, U, V)](c *Container, f F, others ...any) {
+func Call3[T1 any, T2 any, T3 any, F func(T1, T2, T3)](c *Container, f F, others ...any) {
 	v := reflect.ValueOf(f)
 
 	args := []reflect.Value{}

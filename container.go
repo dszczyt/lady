@@ -42,3 +42,20 @@ func Call2[T any, U any, F func(T, U)](c *Container, f F, others ...any) {
 
 	v.Call(args)
 }
+
+func Call3[T any, U any, V any, F func(T, U, V)](c *Container, f F, others ...any) {
+	v := reflect.ValueOf(f)
+
+	args := []reflect.Value{}
+
+	for i := 0; i < 3; i++ {
+		if arg, ok := c.data[reflect.PointerTo(v.Type().In(i))]; ok {
+			args = append(args, arg)
+		} else {
+			args = append(args, reflect.ValueOf(others[0]))
+			others = others[1:]
+		}
+	}
+
+	v.Call(args)
+}
